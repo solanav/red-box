@@ -1,7 +1,6 @@
 import re
 import email
 import imaplib
-from email.message import EmailMessage
 from datetime import datetime
 from email import message
 from email.policy import default as default_policy
