@@ -4,6 +4,7 @@ from redbox.testing import DummyGmailImap
 
 ROOT = Path(__file__).parent
 
+
 @pytest.fixture()
 def IMAP4():
     DummyGmailImap.update_emails_()

@@ -4,17 +4,20 @@ from redbox.models import EmailMessage
 from redbox.testing import DummyGmailImap
 from redbox.query import FROM, RECENT, SEEN, SUBJECT, UNSEEN
 
+
 def test_box(IMAP4):
     box = EmailBox(host="localhost", port=0, cls_imap=IMAP4)
-    assert box['INBOX'] is box.inbox
+    assert box["INBOX"] is box.inbox
 
     with pytest.raises(KeyError):
-        box['NOT-EXISTING']
+        box["NOT-EXISTING"]
+
 
 def test_search_not_found(IMAP4):
     box = EmailBox(host="localhost", port=0, cls_imap=IMAP4)
     inbox = box.inbox
     assert inbox.search(subject="NOT FOUND") == []
+
 
 def test_search_found(IMAP4):
     box = EmailBox(host="localhost", port=0, cls_imap=IMAP4)
@@ -29,6 +32,7 @@ def test_search_found(IMAP4):
         EmailMessage(uid=2, session=inbox.session, mailbox="INBOX"),
     ]
 
+
 def test_search_query(IMAP4):
     box = EmailBox(host="localhost", port=0, cls_imap=IMAP4)
     inbox = box.inbox
@@ -38,9 +42,10 @@ def test_search_query(IMAP4):
     assert inbox.search(SUBJECT("example 2") & UNSEEN) == [
         EmailMessage(uid=2, session=inbox.session, mailbox="INBOX"),
     ]
-    assert inbox.search(SUBJECT("example 2") & SEEN & FROM('miksus@example.com')) == [
+    assert inbox.search(SUBJECT("example 2") & SEEN & FROM("miksus@example.com")) == [
         EmailMessage(uid=2, session=inbox.session, mailbox="INBOX"),
     ]
+
 
 def test_search_string(IMAP4):
     box = EmailBox(host="localhost", port=0, cls_imap=IMAP4)
@@ -51,6 +56,8 @@ def test_search_string(IMAP4):
     assert inbox.search('(ALL (SUBJECT "example 2") (UNSEEN))') == [
         EmailMessage(uid=2, session=inbox.session, mailbox="INBOX"),
     ]
-    assert inbox.search('(ALL (ALL (SUBJECT "example 2") (SEEN)) (FROM "miksus@example.com"))') == [
+    assert inbox.search(
+        '(ALL (ALL (SUBJECT "example 2") (SEEN)) (FROM "miksus@example.com"))'
+    ) == [
         EmailMessage(uid=2, session=inbox.session, mailbox="INBOX"),
     ]

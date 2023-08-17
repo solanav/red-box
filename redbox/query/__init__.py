@@ -49,7 +49,8 @@ UID = ValueField("UID")
 KEYWORD = ValueField("KEYWORD")
 UNKEYWORD = ValueField("UNKEYWORD")
 
-def _build(key:str, val):
+
+def _build(key: str, val):
     # Turning from_ --> "FROM", "to" --> "TO" etc.
     key = key.upper().rstrip("_")
     obj = BaseField._fields[key]
@@ -68,6 +69,7 @@ def _build(key:str, val):
             yield obj(*val)
     else:
         raise TypeError("Invalid field")
+
 
 def build(**kwargs) -> str:
     qry = None

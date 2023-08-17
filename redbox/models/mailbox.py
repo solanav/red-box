@@ -9,7 +9,7 @@ from redbox.query.query import BaseQuery
 
 class MailFolder(BaseModel):
     class Config:
-        arbitrary_types_allowed=True
+        arbitrary_types_allowed = True
 
     session: imaplib.IMAP4
     name: str
@@ -29,7 +29,7 @@ class MailFolder(BaseModel):
         "Create the mailbox"
         self.session.create(self.name)
 
-    def rename(self, new_name:str):
+    def rename(self, new_name: str):
         "Set a new name for the mailbox"
         self.session.rename(self.name, new_name)
         self.name = new_name
@@ -46,21 +46,23 @@ class MailFolder(BaseModel):
         "Unsubscribe to the mailbox"
         self.session.unsubscribe(self.name)
 
-    def search(self, _query:Union[BaseQuery, str]=None, **kwargs) -> List[EmailMessage]:
+    def search(
+        self, _query: Union[BaseQuery, str] = None, **kwargs
+    ) -> List[EmailMessage]:
         "Search the mailbox using given query"
         self.select()
 
         qry = self._format_query(_query, **kwargs)
         typ, msg_ids = self.session.search(None, qry)
         ids_messages = list(msg_ids[0].decode("UTF-8").split(" "))
-        if ids_messages == ['']:
+        if ids_messages == [""]:
             # No messages found
             return []
         return [
             self.cls_message(uid=int(uid), session=self.session, mailbox=self.name)
             for uid in ids_messages
         ]
-    
+
     def _format_query(self, _query=None, **kwargs) -> str:
         if _query is None:
             return build(**kwargs)

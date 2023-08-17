@@ -1,18 +1,18 @@
-from typing import Dict, List
+from typing import Any, Dict, Generator, List, Optional
 from email.message import EmailMessage
 from redbox.models.attachment import Attachment
 
-class Inspector:
 
-    def __init__(self, msg:EmailMessage):
+class Inspector:
+    def __init__(self, msg: EmailMessage):
         self.message = msg
 
     def get_headers(self) -> Dict[str, str]:
         return dict(self.message.items())
 
-    def get_html_body(self) -> str:
+    def get_html_body(self) -> Optional[str]:
         for pl in self.message.get_payload():
-            content_type = pl['Content-Type'].split(";")
+            content_type = pl["Content-Type"].split(";")
             if "text/html" in content_type:
                 return pl.get_payload()
             elif "multipart/related" in content_type:
@@ -20,9 +20,9 @@ class Inspector:
             elif "multipart/alternative" in content_type:
                 return Inspector(pl).get_html_body()
 
-    def get_text_body(self) -> str:
+    def get_text_body(self) -> Optional[str]:
         for pl in self.message.get_payload():
-            content_type = pl['Content-Type'].split(";")
+            content_type = pl["Content-Type"].split(";")
             if "text/plain" in content_type:
                 return pl.get_payload()
             elif "multipart/related" in content_type:
@@ -34,11 +34,11 @@ class Inspector:
                 if body is not None:
                     return body
 
-    def get_attachments(self) -> List:
+    def get_attachments(self) -> Generator[Attachment, Any, Any]:
         # Mime types:
         #   text/plain: For textual files
         #   application/octet-stream: For all others
         for pl in self.message.get_payload():
-            content_type = pl['Content-Type'].split(";")[0]
+            content_type = pl["Content-Type"].split(";")[0]
             if content_type.startswith("application/"):
                 yield Attachment.from_message(pl)

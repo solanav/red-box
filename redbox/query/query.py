@@ -1,8 +1,8 @@
-        
 from copy import copy
 from typing import Dict
 
-class BaseQuery:              
+
+class BaseQuery:
     def __and__(self, other):
         return ALL(self, other)
 
@@ -12,16 +12,18 @@ class BaseQuery:
     def __invert__(self):
         return NOT(self)
 
+
 class BaseField(BaseQuery):
     _fields = {}
+
     def __init__(self, name):
         self._fields[name] = self
         self._name = name
-    
+
 
 class Flag(BaseField):
     def __str__(self):
-        return f'({self._name})'
+        return f"({self._name})"
 
 
 class ValueField(BaseField):
@@ -33,6 +35,7 @@ class ValueField(BaseField):
     def __str__(self):
         raise ValueError(f"Field {self._name} needs a value")
 
+
 class KeyValueField(BaseField):
     "Field that contains a key and a value"
 
@@ -41,6 +44,7 @@ class KeyValueField(BaseField):
 
     def __str__(self):
         raise ValueError(f"Field {self._name} needs a value")
+
 
 class CompareField(BaseField):
     "Field that contains a statement"
@@ -53,6 +57,7 @@ class CompareField(BaseField):
             return f"({self._name})"
         raise ValueError(f"{self._name} requires statement")
 
+
 class NotField(BaseField):
     "NOT field"
 
@@ -64,18 +69,18 @@ class NotField(BaseField):
 
 
 class LogicalFilled(BaseField):
-
-    def __init__(self, field, values:tuple):
+    def __init__(self, field, values: tuple):
         self._field = field
         self._values = values
 
     def __str__(self):
         if isinstance(self._values, tuple):
             a, b = self._values
-            return f'({self._field._name} {a} {b})'
+            return f"({self._field._name} {a} {b})"
         else:
             value = self._values
-            return f'({self._field._name} {value})'
+            return f"({self._field._name} {value})"
+
 
 class ValueFilled(BaseQuery):
     "Field that has already a value"
@@ -86,6 +91,7 @@ class ValueFilled(BaseQuery):
 
     def __str__(self):
         return f'({self._field._name} "{self._value}")'
+
 
 class KeyValueFilled(BaseQuery):
     "Field that has already a key and a value"
@@ -98,7 +104,7 @@ class KeyValueFilled(BaseQuery):
     def __str__(self):
         return f'({self._field._name} "{self._key}" "{self._value}")'
 
+
 ALL = CompareField("ALL")
 OR = CompareField("OR")
 NOT = NotField("NOT")
-

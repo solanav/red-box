@@ -9,8 +9,10 @@ from redbox.utils.inspector import Inspector
 
 # https://datatracker.ietf.org/doc/html/rfc2060.html
 
+
 class EmailMessage(BaseModel):
     """Simplified representation of an email"""
+
     class Config:
         arbitrary_types_allowed = True
 
@@ -29,7 +31,7 @@ class EmailMessage(BaseModel):
         self._content = msg
         self._flags = self._parse_flags(flags)
 
-# Email content related
+    # Email content related
 
     @property
     def content(self) -> List[str]:
@@ -53,7 +55,7 @@ class EmailMessage(BaseModel):
         insp = Inspector(msg)
         return insp.get_text_body()
 
-# Content headers
+    # Content headers
 
     @property
     def headers(self) -> Dict[str, str]:
@@ -64,23 +66,23 @@ class EmailMessage(BaseModel):
     @property
     def from_(self) -> str:
         headers = {k.lower(): v for k, v in self.headers.items()}
-        return headers['from']
+        return headers["from"]
 
     @property
     def to(self) -> List[str]:
         headers = {k.lower(): v for k, v in self.headers.items()}
-        to = headers['to']
+        to = headers["to"]
         return re.split(r", ?", to)
 
     @property
     def subject(self) -> str:
         headers = {k.lower(): v for k, v in self.headers.items()}
-        return headers['subject']
+        return headers["subject"]
 
     @property
     def date(self) -> Dict[str, str]:
         headers = {k.lower(): v for k, v in self.headers.items()}
-        date = headers['date']
+        date = headers["date"]
         return datetime.datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
 
     def read(self):
@@ -107,7 +109,7 @@ class EmailMessage(BaseModel):
         "Undelete the message (remove flag '\Deleted')"
         self.set(deleted=False)
 
-# Flags
+    # Flags
 
     @property
     def flags(self) -> List[str]:
@@ -135,9 +137,9 @@ class EmailMessage(BaseModel):
         "Whether the email is read"
         return r"\Draft" in self.flags
 
-# Utils
+    # Utils
 
-    def _fetch(self, part:str) -> list:
+    def _fetch(self, part: str) -> list:
         self.session.select(self.mailbox)
         typ, data = self.session.fetch(str(self.uid), part)
         if typ != "OK":
@@ -162,30 +164,37 @@ class EmailMessage(BaseModel):
     def update_flags(self):
         self._flags = self._fetch_flags()
 
-# Modify flags
+    # Modify flags
 
-    def add_flag(self, *flags:str):
+    def add_flag(self, *flags: str):
         # \Deleted \Flagged \Seen
-        flag_set = ' '.join(flags) 
-        self._store('+FLAGS', flag_set)
+        flag_set = " ".join(flags)
+        self._store("+FLAGS", flag_set)
 
-    def set_flag(self, *flags:str):
+    def set_flag(self, *flags: str):
         # \Deleted \Flagged \Seen
-        flag_set = ' '.join(flags) 
-        self._store('FLAGS', flag_set)
+        flag_set = " ".join(flags)
+        self._store("FLAGS", flag_set)
 
-    def remove_flag(self, *flags:str):
-        flag_set = ' '.join(flags) 
-        self._store('-FLAGS', flag_set)
+    def remove_flag(self, *flags: str):
+        flag_set = " ".join(flags)
+        self._store("-FLAGS", flag_set)
 
-    def set(self, seen:bool=None, flagged:bool=None, answered:bool=None, draft:bool=None, deleted:bool=None):
+    def set(
+        self,
+        seen: bool = None,
+        flagged: bool = None,
+        answered: bool = None,
+        draft: bool = None,
+        deleted: bool = None,
+    ):
         "Set/unset flags"
         kwargs = {
-            r'\Seen': seen,
-            r'\Flagged': flagged,
-            r'\Answered': answered,
-            r'\Draft': draft,
-            r'\Deleted': deleted,
+            r"\Seen": seen,
+            r"\Flagged": flagged,
+            r"\Answered": answered,
+            r"\Draft": draft,
+            r"\Deleted": deleted,
         }
         add_flags = [key for key, val in kwargs.items() if val]
         del_flags = [key for key, val in kwargs.items() if not val and val is not None]
@@ -198,13 +207,12 @@ class EmailMessage(BaseModel):
 
     def _fetch_content(self):
         # Equivalent to BODY[]
-        return self._fetch('(RFC822)')[0]
+        return self._fetch("(RFC822)")[0]
 
     def _fetch_flags(self) -> List[str]:
-        out = self._fetch('(FLAGS)')[0]
+        out = self._fetch("(FLAGS)")[0]
         return self._parse_flags(out)
 
-    def _parse_flags(self, flags:str) -> List[str]:
-        flags = re.sub(r'^[0-9]* [(]FLAGS [(]', '', flags)
+    def _parse_flags(self, flags: str) -> List[str]:
+        flags = re.sub(r"^[0-9]* [(]FLAGS [(]", "", flags)
         return flags.strip("()").split(" ")
-
