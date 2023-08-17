@@ -1,10 +1,10 @@
 from typing import Any, Dict, Generator, List, Optional
-from email.message import Message
+from email.message import EmailMessage
 from redbox.models.attachment import Attachment
 
 
 class Inspector:
-    def __init__(self, msg: Message):
+    def __init__(self, msg: EmailMessage):
         self.message = msg
 
     def get_headers(self) -> Dict[str, str]:

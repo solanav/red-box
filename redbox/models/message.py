@@ -1,8 +1,10 @@
 import re
 import email
 import imaplib
-from email.message import Message
+from email.message import EmailMessage
 from datetime import datetime
+from email import message
+from email.policy import default as default_policy
 from typing import Dict, List, Optional, Union
 from pydantic import BaseModel, Field, PrivateAttr, validator
 from redbox.utils.inspector import Inspector
@@ -40,8 +42,8 @@ class EmailMessage(BaseModel):
         return self._content # type: ignore
 
     @property
-    def email(self) -> Message:
-        return email.message_from_string(self.content)
+    def email(self) -> message.EmailMessage:
+        return email.message_from_string(self.content, policy=default_policy) # type: ignore
 
     @property
     def html_body(self) -> Optional[str]:
@@ -50,16 +52,14 @@ class EmailMessage(BaseModel):
 
     @property
     def text_body(self) -> Optional[str]:
-        msg = self.email
-        insp = Inspector(msg)
+        insp = Inspector(self.email)
         return insp.get_text_body()
 
     # Content headers
 
     @property
     def headers(self) -> Dict[str, str]:
-        msg = self.email
-        insp = Inspector(msg)
+        insp = Inspector(self.email)
         return insp.get_headers()
 
     @property
