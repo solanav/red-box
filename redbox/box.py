@@ -44,7 +44,7 @@ class EmailBox:
         for mailbox in self.mailfolders:
             if mailbox.name == name:
                 return mailbox
-        raise KeyError(f"Mailbox {mailbox!r} not found")
+        raise KeyError(f"Mailbox {name!r} not found")
 
     @property
     def mailfolders(self) -> List[MailFolder]:
