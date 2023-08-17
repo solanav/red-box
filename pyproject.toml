@@ -1,16 +1,17 @@
 [tool.poetry]
-name = "red-box"
-version = "0.1.0"
+name = "redbox2"
+version = "0.2.2"
 description = ""
 authors = ["asolana <asolana@deloitte.es>"]
 readme = "README.md"
-packages = [{include = "red_box"}]
+packages = [{include = "redbox"}]
 
 [tool.poetry.dependencies]
 python = "^3.8"
+tomli = "^2.0.1"
+pydantic = "^2.2.0"
 
 [tool.poetry.group.dev.dependencies]
-pydantic = "^2.1.1"
 black = "^23.7.0"
 pytest = "^7.4.0"
 
