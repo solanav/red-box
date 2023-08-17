@@ -42,7 +42,7 @@ class EmailBox:
     def __getitem__(self, name: str) -> MailFolder:
         "Get an existing mailbox"
         for mailbox in self.mailfolders:
-            if mailbox.name == name:
+            if mailbox.name == name or mailbox.name == f'"{name}"':
                 return mailbox
         raise KeyError(f"Mailbox {name!r} not found")
 
@@ -95,6 +95,10 @@ class EmailBox:
             
             items = match.groupdict()
             name = items["name"]
+            
+            # Quote the name if it contains spaces
+            if " " in name:
+                name = f'"{name}"'
             
             if raw_flags := items.get("flags"):
                 flags = raw_flags.split(" ")
