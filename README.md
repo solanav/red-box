@@ -26,7 +26,7 @@ Core features:
 Install it from PyPI:
 
 ```shell
-pip install redbox
+pip install redbox2
 ```
 
 ## Why Red Box?
