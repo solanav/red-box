@@ -55,7 +55,7 @@ class EmailBox:
     def get(self, name: str) -> MailFolder:
         "Get mailbox. If not found, not existing mailbox is returned"
         try:
-            self[name]
+            return self[name]
         except KeyError:
             return self._construct_mailbox(name=name)
 
