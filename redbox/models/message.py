@@ -1,8 +1,8 @@
-import datetime
-import email
-from email.message import EmailMessage
-import imaplib
 import re
+import email
+import imaplib
+from email.message import Message
+from datetime import datetime
 from typing import Dict, List, Optional, Union
 from pydantic import BaseModel, Field, PrivateAttr, validator
 from redbox.utils.inspector import Inspector
@@ -34,23 +34,22 @@ class EmailMessage(BaseModel):
     # Email content related
 
     @property
-    def content(self) -> List[str]:
+    def content(self) -> str:
         if self._content is None:
             self._content = self._fetch_content()
-        return self._content
+        return self._content # type: ignore
 
     @property
-    def email(self) -> EmailMessage:
+    def email(self) -> Message:
         return email.message_from_string(self.content)
 
     @property
-    def html_body(self) -> str:
-        msg = self.email
-        insp = Inspector(msg)
+    def html_body(self) -> Optional[str]:
+        insp = Inspector(self.email)
         return insp.get_html_body()
 
     @property
-    def text_body(self) -> str:
+    def text_body(self) -> Optional[str]:
         msg = self.email
         insp = Inspector(msg)
         return insp.get_text_body()
@@ -80,10 +79,10 @@ class EmailMessage(BaseModel):
         return headers["subject"]
 
     @property
-    def date(self) -> Dict[str, str]:
+    def date(self) -> datetime:
         headers = {k.lower(): v for k, v in self.headers.items()}
         date = headers["date"]
-        return datetime.datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
+        return datetime.strptime(date, "%a, %d %b %Y %H:%M:%S %z")
 
     def read(self):
         "Read the message (set flag '\Seen')"
@@ -182,11 +181,11 @@ class EmailMessage(BaseModel):
 
     def set(
         self,
-        seen: bool = None,
-        flagged: bool = None,
-        answered: bool = None,
-        draft: bool = None,
-        deleted: bool = None,
+        seen: Optional[bool] = None,
+        flagged: Optional[bool] = None,
+        answered: Optional[bool] = None,
+        draft: Optional[bool] = None,
+        deleted: Optional[bool] = None,
     ):
         "Set/unset flags"
         kwargs = {

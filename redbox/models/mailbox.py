@@ -1,5 +1,5 @@
 import imaplib
-from typing import List, Type, Union
+from typing import List, Optional, Type, Union
 from pydantic import BaseModel
 from redbox.models.message import EmailMessage
 
@@ -18,8 +18,8 @@ class MailFolder(BaseModel):
 
     cls_message: Type[EmailMessage]
 
-    def __str__(self):
-        return self.mailbox
+    def __str__(self) -> str:
+        return self.name
 
     def select(self):
         "Select this mailbox"
@@ -47,7 +47,7 @@ class MailFolder(BaseModel):
         self.session.unsubscribe(self.name)
 
     def search(
-        self, _query: Union[BaseQuery, str] = None, **kwargs
+        self, _query: Optional[Union[BaseQuery, str]] = None, **kwargs
     ) -> List[EmailMessage]:
         "Search the mailbox using given query"
         self.select()

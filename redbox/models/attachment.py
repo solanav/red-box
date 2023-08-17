@@ -24,9 +24,13 @@ class Attachment(BaseModel):
     @classmethod
     def from_message(cls, payload: EmailMessage):
         disposition = cls._parse_disposition(payload)
+        
+        filename = disposition.get("filename")
+        if filename is not None:
+            filename = filename.strip('"')
 
         return cls(
             content_type=payload["Content-Type"],
             content=payload.get_payload(),
-            filename=disposition.get("filename").strip('"'),
+            filename=filename,
         )
