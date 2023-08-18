@@ -4,11 +4,9 @@
 
 ---
 
-[![Pypi version](https://badgen.net/pypi/v/redbox)](https://pypi.org/project/redbox/)
-[![build](https://github.com/Miksus/red-box/actions/workflows/main.yml/badge.svg?branch=master)](https://github.com/Miksus/red-box/actions/workflows/main.yml)
-[![codecov](https://codecov.io/gh/Miksus/red-box/branch/master/graph/badge.svg?token=IMR1CQT9PY)](https://codecov.io/gh/Miksus/red-box)
+[![Pypi version](https://badgen.net/pypi/v/redbox2)](https://pypi.org/project/redbox2/)
 [![Documentation Status](https://readthedocs.org/projects/red-box/badge/?version=latest)](https://red-box.readthedocs.io)
-[![PyPI pyversions](https://badgen.net/pypi/python/redbox)](https://pypi.org/project/redbox/)
+[![PyPI pyversions](https://badgen.net/pypi/python/redbox2)](https://pypi.org/project/redbox2/)
 
 - [Documentation](https://red-box.readthedocs.io)
 - [Source code](https://github.com/Miksus/red-box)
